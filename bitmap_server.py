@@ -11,8 +11,8 @@ def application(environ, start_response):
     print('%r' % (path_info,))
     if path_info != '/':
         return not_found(environ, start_response)
-    start_response('200 OK',[('Content-type','text/html')])
-    return [b'<html><body>Hello World!</body></html>']
+    start_response('200 OK',[('Content-type','application/octet-stream')])  # TODO consider application/x-binary, application/x-bms, application/x-bitmap-server, etc. 
+    return [b'Hello World!']
     
 
 
