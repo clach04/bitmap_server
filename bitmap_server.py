@@ -6,6 +6,7 @@ from anywsgi import not_found
 from anywsgi import DEFAULT_LISTEN_ADDRESS, DEFAULT_SERVER_PORT
 
 
+file_name = os.environ.get('BMS_BIN_FILE', 'bitmap_server.py')  # FIXME debug test for now
 def application(environ, start_response):
     path_info = environ['PATH_INFO']
     print('%r' % (path_info,))
@@ -13,7 +14,6 @@ def application(environ, start_response):
         return not_found(environ, start_response)
 
     # TODO handle errors and return something suitable to client
-    file_name = 'bitmap_server.py'  # FIXME debug test for now
     f = open(file_name, 'rb')
     data = f.read()
     f.close()
