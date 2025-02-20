@@ -27,6 +27,6 @@ then "curl http://localhost:8080/", curl appears to hangs (actually takes a long
 Happens with:
 
   * built-in wsgiref.simple_server 0.2, which in Pyton 3 is http.server.HTTPServer, which is based on socketserver.TCPServer
-  *  werkzeug 3.1.3
+  * werkzeug 3.1.3
 """
 anywsgi.my_start_server(application, listen_address=listen_address, listen_port=server_port)
