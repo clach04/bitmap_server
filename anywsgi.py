@@ -144,7 +144,9 @@ def my_start_server(callable_app, listen_address=DEFAULT_LISTEN_ADDRESS, listen_
 
     # Try servers in the order I personally prefer ;-)
     if werkzeug:
-        log.info('Using: werkzeug %s', werkzeug.__version__)
+        import importlib.metadata
+        #log.info('Using: werkzeug %s', werkzeug.__version__)
+        log.info('Using: werkzeug %s', importlib.metadata.version("werkzeug"))
         #werkzeug.serving.run_simple(listen_address, listen_port, callable_app, use_debugger=True, use_reloader=True)
         werkzeug.serving.run_simple(listen_address, listen_port, callable_app, use_debugger=False, use_reloader=False)
     elif waitress:
