@@ -27,7 +27,7 @@ def application(environ, start_response):
 
 
 print('Python %s on %s' % (sys.version, sys.platform))
-listen_address = os.environ.get('LISTEN_ADDRESS', DEFAULT_LISTEN_ADDRESS)
+listen_address = os.environ.get('LISTEN_ADDRESS', '0.0.0.0')
 server_port = int(os.environ.get('LISTEN_PORT', DEFAULT_SERVER_PORT))
 
 """FIXME seems to work fine...
