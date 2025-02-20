@@ -11,8 +11,16 @@ def application(environ, start_response):
     print('%r' % (path_info,))
     if path_info != '/':
         return not_found(environ, start_response)
+
+    # TODO handle errors and return something suitable to client
+    file_name = 'bitmap_server.py'  # FIXME debug test for now
+    f = open(file_name, 'rb')
+    data = f.read()
+    f.close()
+
+    # TODO content length
     start_response('200 OK',[('Content-type','application/octet-stream')])  # TODO consider application/x-binary, application/x-bms, application/x-bitmap-server, etc. 
-    return [b'Hello World!']
+    return [data]
     
 
 
