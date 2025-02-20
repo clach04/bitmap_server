@@ -10,7 +10,11 @@ import anywsgi
 from anywsgi import not_found
 from anywsgi import DEFAULT_LISTEN_ADDRESS, DEFAULT_SERVER_PORT
 
+# TODO version, and include in header response
 
+# this file should be generated using a tool like:
+#  * https://github.com/clach04/cyd_clocks/blob/main/image_converter.py
+#  * https://github.com/peterhinch/micropython-nano-gui/blob/master/img_cvt.py
 file_name = os.environ.get('BMS_BIN_FILE', 'bitmap_server.py')  # FIXME debug test for now
 def application(environ, start_response):
     path_info = environ['PATH_INFO']
