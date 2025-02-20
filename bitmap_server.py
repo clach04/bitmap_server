@@ -18,8 +18,10 @@ def application(environ, start_response):
     data = f.read()
     f.close()
 
-    # TODO content length
-    start_response('200 OK',[('Content-type','application/octet-stream')])  # TODO consider application/x-binary, application/x-bms, application/x-bitmap-server, etc. 
+    start_response('200 OK',[
+        ('Content-type', 'application/octet-stream'),  # TODO consider application/x-binary, application/x-bms, application/x-bitmap-server, etc.
+        ('Content-Length', str(len(data)))
+    ])
     return [data]
     
 
