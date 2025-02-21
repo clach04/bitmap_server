@@ -25,8 +25,79 @@ from anywsgi import not_found
 from anywsgi import DEFAULT_LISTEN_ADDRESS, DEFAULT_SERVER_PORT
 
 
+is_py3 = sys.version_info >= (3,)
 
 ################################################
+
+def mygetpalette(pal_type, orig_image_palette):
+    # return palette list of tuples in RGB order
+    palette = []
+    if pal_type != "RGB":
+        return palette
+    image_palette = orig_image_palette[:]
+    while image_palette != []:
+        r = image_palette.pop(0)
+        g = image_palette.pop(0)
+        b = image_palette.pop(0)
+        palette.append( (r, g, b) )
+    return palette
+
+def convert_image(image):
+    color_count = 14  # 4-bit color depth
+    im = image.convert("P", palette=Image.ADAPTIVE, colors=color_count)  # TODO preset pallete, dither options...
+    width, height = im.size
+    try:
+        if im.info["transparency"] == 0:
+            transparency = True
+    except KeyError:
+        transparency = False
+
+    # FIXME more sanity checks
+    # FIXME sanity check; no transparency
+    # FIXME sanity check; bit depth 4 or less
+
+    # Sanity checks on assumptions
+    if 'getdata' not in dir(im.palette):
+        raise NotImplementedError('image must be indexed, try a PNG or GIF')
+    pal_type, pal_data = im.palette.getdata()
+    if pal_type != "RGB":
+        raise NotImplementedError('Need RGB palette, try a PNG file (instead of BMP)')
+
+    print(pal_data)
+    if is_py3:
+        pal_data = list(pal_data)
+    else:
+        pal_data = list(map(ord, pal_data))  # py2 bytes to ints
+
+    indexed_palette = mygetpalette(pal_type,pal_data) ## must contain accurate palette
+
+    print(indexed_palette)
+    for entry in indexed_palette:
+        print(entry)
+
+    pixels = list(im.getdata())
+    """
+    for x in im.getdata():
+        print(x)
+    print('')
+    print(pixels)
+    """
+
+    # generate format than nano-gui recommends; 2 byte ints for dimensions, then pixel data 4-bits each for index (into palette)
+    fo = FakeFile()  # TODO don't really need to use a file API
+    fo.write(b"".join((height.to_bytes(2, "big"), width.to_bytes(2, "big"))))
+
+    pixel_counter = 0
+    nibbles = [0, 0]
+    while pixel_counter < len(pixels):
+        for n in range(2):
+            c = pixels[pixel_counter]
+            nibbles[n] = c
+            pixel_counter += 1
+        fo.write(int.to_bytes((nibbles[0] << 4) | nibbles[1], 1, "big"))
+
+    return fo.getvalue()
+
 
 def generate_image(format='png'):
     screen_res = (100, 100)  # FIXME / TODO config
@@ -146,9 +217,12 @@ def generate_image(format='png'):
     # this file should be generated using a tool like:
     #  * https://github.com/clach04/cyd_clocks/blob/main/image_converter.py
     #  * https://github.com/peterhinch/micropython-nano-gui/blob/master/img_cvt.py
-    bufferedfileptr = FakeFile()
-    image.save(bufferedfileptr, format=format)
-    return bufferedfileptr.getvalue()
+    if format == '4bitbin':  # FIXME use a variable rather than literal
+        return convert_image(image)
+    else:
+        bufferedfileptr = FakeFile()
+        image.save(bufferedfileptr, format=format)
+        return bufferedfileptr.getvalue()
     #image.show()
 
 ################################################
@@ -163,8 +237,8 @@ def application(environ, start_response):
         return not_found(environ, start_response)
 
     # TODO handle errors and return something suitable to client
-    data, content_type = generate_image(format='png'), 'image/png'
-    #data, content_type = generate_image(format='4bit'), 'application/octet-stream'
+    #data, content_type = generate_image(format='png'), 'image/png'
+    data, content_type = generate_image(format='4bitbin'), 'application/octet-stream'
 
     start_response('200 OK',[
         #('Content-type', 'application/octet-stream'),  # TODO consider application/x-binary, application/x-bms, application/x-bitmap-server, etc.
