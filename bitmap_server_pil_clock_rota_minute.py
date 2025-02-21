@@ -157,9 +157,14 @@ def generate_image(format='png'):
 
     # https://pillow.readthedocs.io/en/stable/reference/ImageFont.html#PIL.ImageFont.FreeTypeFont.getbbox
     # pre-calculating this with 2 digits does NOT work for 1 digit :-(
-    clock_font_box = clock_font.getbbox('00')  # with older PIL ('7.0.0') not available; AttributeError: 'FreeTypeFont' object has no attribute 'getbbox'. Fine with Pillow PIL.__version__ == 11.1.0
-    clock_font_width, clock_font_height = clock_font_box[2], clock_font_box[3]
-    print('clock_font_box %r' % (clock_font_box,))
+    try:
+        clock_font_box = clock_font.getbbox('00')  # with older PIL ('7.0.0') not available; AttributeError: 'FreeTypeFont' object has no attribute 'getbbox'. Fine with Pillow PIL.__version__ == 11.1.0
+        clock_font_width, clock_font_height = clock_font_box[2], clock_font_box[3]
+        print('clock_font_box %r' % (clock_font_box,))
+    except :
+        clock_font_width, clock_font_height = clock_font.getsize('00')
+
+    print('clock_font sizes %r' % ((clock_font_width, clock_font_height),))
 
     image = Image.new('RGB', screen_res, background_color)
     draw = ImageDraw.Draw(image)
@@ -194,9 +199,14 @@ def generate_image(format='png'):
     # ImageDraw.text(xy, text, fill=None, font=None, anchor=None, spacing=4, align='left', direction=None, features=None, language=None, stroke_width=0, stroke_fill=None, embedded_color=False, font_size=None)
 
     # calc boundary and locatation each time for center - needed as precalc works for either single or double digits but not both (could pre-calc both..)
-    clock_font_box = clock_font.getbbox(clock_text)
-    clock_font_width, clock_font_height = clock_font_box[2], clock_font_box[3]
-    print('clock_font_box %r' % (clock_font_box,))
+    try:
+        clock_font_box = clock_font.getbbox(clock_text)  # with older PIL ('7.0.0') not available; AttributeError: 'FreeTypeFont' object has no attribute 'getbbox'. Fine with Pillow PIL.__version__ == 11.1.0
+        clock_font_width, clock_font_height = clock_font_box[2], clock_font_box[3]
+        print('clock_font_box %r' % (clock_font_box,))
+    except :
+        clock_font_width, clock_font_height = clock_font.getsize('00')
+
+    print('clock_font sizes %r' % ((clock_font_width, clock_font_height),))
 
     text_pos = (0, 0)
     text_pos = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)  # FIXME close enough for initial version
