@@ -147,7 +147,7 @@ def generate_image(format='png'):
             # ImageFont.truetype(font, size); size, in pixels.
             clock_font = ImageFont.truetype(font_filename, font_size)
             #log.debug('font %r %r', font_filename, font_size)
-            temp_font = ImageFont.truetype(font_filename, font_size // 2)
+            print('font %r %r' %(font_filename, font_size))
             break
         except IOError:
             pass
@@ -157,7 +157,7 @@ def generate_image(format='png'):
 
     # https://pillow.readthedocs.io/en/stable/reference/ImageFont.html#PIL.ImageFont.FreeTypeFont.getbbox
     # pre-calculating this with 2 digits does NOT work for 1 digit :-(
-    clock_font_box = clock_font.getbbox('00')
+    clock_font_box = clock_font.getbbox('00')  # with older PIL ('7.0.0') not available; AttributeError: 'FreeTypeFont' object has no attribute 'getbbox'. Fine with Pillow PIL.__version__ == 11.1.0
     clock_font_width, clock_font_height = clock_font_box[2], clock_font_box[3]
     print('clock_font_box %r' % (clock_font_box,))
 
