@@ -147,7 +147,7 @@ def generate_image(format='png'):
             # ImageFont.truetype(font, size); size, in pixels.
             clock_font = ImageFont.truetype(font_filename, font_size)
             #log.debug('font %r %r', font_filename, font_size)
-            temp_font = ImageFont.truetype(font_filename, font_size / 2)
+            temp_font = ImageFont.truetype(font_filename, font_size // 2)
             break
         except IOError:
             pass
