@@ -43,7 +43,7 @@ def mygetpalette(pal_type, orig_image_palette):
     return palette
 
 def convert_image(image):
-    color_count = 14  # 4-bit color depth
+    color_count = 16  # 4-bit color depth
     dither_none = Image.NONE  # Image.Dither.NONE
     im = image.convert("P", dither=dither_none, palette=Image.ADAPTIVE, colors=color_count)  # TODO preset pallete, dither options...
     width, height = im.size
@@ -123,7 +123,7 @@ def generate_image(format='png'):
     # FIXME / TODO config
     background_color = 'white'
     digit_color = 'black'
-    hour_color = 'blue'
+    hour_color = digit_color  # 'blue'
     arc_width = min_pixel_length // 10  # pixels
     font_size = 72
     font_size = arc_width * 5
