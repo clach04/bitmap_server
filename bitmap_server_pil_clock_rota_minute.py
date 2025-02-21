@@ -167,7 +167,10 @@ def generate_image(format='png'):
 
     print('clock_font sizes %r' % ((clock_font_width, clock_font_height),))
 
-    image = Image.new('RGB', screen_res, background_color)  # TODO make this a palette/index image from the get-go
+    mode = 'P'  # palette
+    mode = 'L'  # B/W
+    image = Image.new(mode, screen_res, background_color)
+    # TODO setup palette/index
     draw = ImageDraw.Draw(image)
 
     now = datetime.datetime.now()
