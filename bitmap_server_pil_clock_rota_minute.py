@@ -44,7 +44,8 @@ def mygetpalette(pal_type, orig_image_palette):
 
 def convert_image(image):
     color_count = 14  # 4-bit color depth
-    im = image.convert("P", palette=Image.ADAPTIVE, colors=color_count)  # TODO preset pallete, dither options...
+    dither_none = Image.NONE  # Image.Dither.NONE
+    im = image.convert("P", dither=dither_none, palette=Image.ADAPTIVE, colors=color_count)  # TODO preset pallete, dither options...
     width, height = im.size
     try:
         if im.info["transparency"] == 0:
