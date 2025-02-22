@@ -51,7 +51,7 @@ nano_gui_palette = [
 NANO_COLOR_BLACK = 0
 NANO_COLOR_GREEN = 1
 NANO_COLOR_RED = 2
-NANO_COLOR_LIGHTRED = DARKRED = 3  # mislabeled
+NANO_COLOR_LIGHTRED = DARKRED = 3  # mislabeled - https://github.com/peterhinch/micropython-nano-gui/issues/95
 NANO_COLOR_BLUE = 4
 NANO_COLOR_YELLOW = 5
 NANO_COLOR_GREY = 6
