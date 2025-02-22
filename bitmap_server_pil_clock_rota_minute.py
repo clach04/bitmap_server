@@ -263,17 +263,21 @@ def application(environ, start_response):
     
 
 
-print('Python %s on %s' % (sys.version, sys.platform))
-listen_address = os.environ.get('LISTEN_ADDRESS', '0.0.0.0')
-server_port = int(os.environ.get('LISTEN_PORT', DEFAULT_SERVER_PORT))
+def main(argv=None):
+    print('Python %s on %s' % (sys.version, sys.platform))
+    listen_address = os.environ.get('LISTEN_ADDRESS', '0.0.0.0')
+    server_port = int(os.environ.get('LISTEN_PORT', DEFAULT_SERVER_PORT))
 
-"""FIXME seems to work fine...
-But if open http://localhost:8080/ in Chrome
-then "curl http://localhost:8080/", curl appears to hangs (actually takes a long time to respond, a little over 60 secs).
+    """FIXME seems to work fine...
+    But if open http://localhost:8080/ in Chrome
+    then "curl http://localhost:8080/", curl appears to hangs (actually takes a long time to respond, a little over 60 secs).
 
-Happens with:
+    Happens with:
 
-  * built-in wsgiref.simple_server 0.2, which in Pyton 3 is http.server.HTTPServer, which is based on socketserver.TCPServer
-  * werkzeug 3.1.3
-"""
-anywsgi.my_start_server(application, listen_address=listen_address, listen_port=server_port)
+      * built-in wsgiref.simple_server 0.2, which in Pyton 3 is http.server.HTTPServer, which is based on socketserver.TCPServer
+      * werkzeug 3.1.3
+    """
+    anywsgi.my_start_server(application, listen_address=listen_address, listen_port=server_port)
+
+if __name__ == "__main__":
+    sys.exit(main())
