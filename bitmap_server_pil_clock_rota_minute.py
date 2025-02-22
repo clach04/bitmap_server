@@ -80,6 +80,15 @@ def mygetpalette(pal_type, orig_image_palette):
     return palette
 
 def convert_image(image):
+    """TODOs
+      * color reduction/conversion?
+          * dither options?
+      * rotation
+      * mirror
+      * flip?
+      * maybe add resize support?
+    """
+
     color_count = 16  # 4-bit color depth
     dither_none = Image.NONE  # Image.Dither.NONE
     im = image.convert("P", dither=dither_none, palette=Image.ADAPTIVE, colors=color_count)  # TODO preset pallete, dither options...
@@ -138,6 +147,17 @@ def convert_image(image):
 
 
 def generate_image(format='png'):
+    """TODOs config option
+      * 24/12 hour config option
+      * 1-bit/4-bit/8-bit color config option
+      * color selection for; backround, digit(s), and arc
+      * screen dimensions config option
+      * font name
+      * font size override
+
+    Ideas:
+      * bitmap digits (rather than font)
+    """
     screen_res = (100, 100)  # FIXME / TODO config
     screen_res = (320, 240)
     #screen_res = (240, 320)
