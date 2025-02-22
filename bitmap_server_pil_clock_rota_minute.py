@@ -98,7 +98,7 @@ def convert_image(image):
     if 'getdata' not in dir(im.palette):
         raise NotImplementedError('image must be indexed, try a PNG or GIF')
     pal_type, pal_data = im.palette.getdata()
-    if pal_type != "RGB":
+    if pal_type not in ("RGB", "RGB;L"):
         raise NotImplementedError('Need RGB palette, try a PNG file (instead of BMP)')
 
     print(pal_data)
