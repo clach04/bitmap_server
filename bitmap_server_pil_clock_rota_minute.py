@@ -29,6 +29,43 @@ is_py3 = sys.version_info >= (3,)
 
 ################################################
 
+# https://github.com/peterhinch/micropython-nano-gui/blob/77f58af1fab27e0ec6ba959a2b04cd4061fa828f/gui/core/colors.py#L14..L27
+nano_gui_palette = [
+    0, 0, 0,        # BLACK
+    0, 255, 0,      # GREEN
+    255, 0, 0,      # RED
+    140, 0, 0,      # LIGHTRED  (actually dark-red)
+    0, 0, 255,      # BLUE
+    255, 255, 0,    # YELLOW
+    100, 100, 100,  # GREY
+    255, 0, 255,    # MAGENTA
+    0, 255, 255,    # CYAN
+    0, 100, 0,      # LIGHTGREEN
+    0, 80, 0,       # DARKGREEN
+    0, 0, 90,       # DARKBLUE
+    75, 75, 75,     # 12 light-Grey  # NOTE not a reserved nano-color
+    150, 150, 150,  # 13 darker-Grey  # NOTE not a reserved nano-color
+    200, 200, 200,  # 14 darkest-Grey  # NOTE not a reserved nano-color
+    255, 255, 255,  # WHITE
+]
+NANO_COLOR_BLACK = 0
+NANO_COLOR_GREEN = 1
+NANO_COLOR_RED = 2
+NANO_COLOR_LIGHTRED = DARKRED = 3  # mislabeled
+NANO_COLOR_BLUE = 4
+NANO_COLOR_YELLOW = 5
+NANO_COLOR_GREY = 6
+NANO_COLOR_MAGENTA = 7
+NANO_COLOR_CYAN = 8
+NANO_COLOR_LIGHTGREEN = 9
+NANO_COLOR_DARKGREEN = 10
+NANO_COLOR_DARKBLUE = 11
+NANO_COLOR_LIGHTGREY = 12  # NOTE not a reserved nano-color
+NANO_COLOR_DARKERGREY = 13  # NOTE not a reserved nano-color
+NANO_COLOR_DARKESTGREY = 14  # NOTE not a reserved nano-color
+NANO_COLOR_WHITE = 15
+
+
 def mygetpalette(pal_type, orig_image_palette):
     # return palette list of tuples in RGB order
     palette = []
@@ -121,9 +158,10 @@ def generate_image(format='png'):
 
 
     # FIXME / TODO config
-    background_color = 'white'
-    digit_color = 'black'
-    hour_color = digit_color  # 'blue'
+    background_color = NANO_COLOR_BLACK
+    digit_color = NANO_COLOR_CYAN
+    arc_color = NANO_COLOR_WHITE
+    #arc_color = digit_color  # 'blue'
     arc_width = min_pixel_length // 10  # pixels
     font_size = 72
     font_size = arc_width * 5
@@ -167,10 +205,10 @@ def generate_image(format='png'):
 
     print('clock_font sizes %r' % ((clock_font_width, clock_font_height),))
 
+    mode = 'L'  # Mono, B/W, Black and White - 1-bit color depth
     mode = 'P'  # palette
-    mode = 'L'  # B/W
     image = Image.new(mode, screen_res, background_color)
-    # TODO setup palette/index
+    image.putpalette(nano_gui_palette)  # setup palette/index
     draw = ImageDraw.Draw(image)
 
     now = datetime.datetime.now()
@@ -225,7 +263,7 @@ def generate_image(format='png'):
     # ImageDraw.arc(xy, start, end, fill=None, width=0)[source]
     #  Angles are measured from 3 o'clock, increasing clockwise
     # FIXME hard coded coordinates
-    draw.arc(circle_box, -90, degree-90, fill=hour_color, width=arc_width)
+    draw.arc(circle_box, -90, degree-90, fill=arc_color, width=arc_width)
 
     # TODO (based on format) convert image to 4-bit palette indexed image
     # this file should be generated using a tool like:
