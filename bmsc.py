@@ -49,7 +49,7 @@ print('pause for wifi to really be up')
 print('URL %s' % url)
 time.sleep(1)  # 1 second
 
-r = requests.get(url, headers={"ID": mac_addr_str, "Width": str(ssd.width), "Height": str(ssd.height)})
+r = requests.get(url, headers={"ID": mac_addr_str, "RSSI": str(wlan.status('rssi')), "Width": str(ssd.width), "Height": str(ssd.height)})
 # Not enough memory to use nice wrappers like content:
 #   MemoryError: memory allocation failed, allocating 35992 bytes
 r.raw.readinto(ssd.mvb)  # Read the image into the frame buffer)
