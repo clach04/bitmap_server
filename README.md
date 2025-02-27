@@ -9,6 +9,7 @@ Serve (raw) bitmaps from a webserver:
 
 Serve (PNG) bitmap images of current time:
 
+    env LISTEN_PORT=1299 python3 bitmap_server_pil_clock_rota_minute.py
     python bitmap_server_pil_clock_rota_minute.py
 
 Test cURL client:
