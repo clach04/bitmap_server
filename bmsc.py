@@ -58,7 +58,8 @@ headers = {
     #"FW-Version": fw_version),  # '2.1.3'
     "RSSI": str(wlan.status('rssi')),
     "Width": str(ssd.width),
-    "Height": str(ssd.height)
+    "Height": str(ssd.height),
+    # TODO does ssd contain a hint about bit-depth (and/or number of colors - for some eink displays number of colors may not completely match 2^bit-depth)?
 }
 
 r = requests.get(url, headers=headers)
