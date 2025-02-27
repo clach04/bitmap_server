@@ -329,9 +329,10 @@ def application(environ, start_response):
     data = generate_image(format=image_type, screen_width=environ.get('HTTP_WIDTH'), screen_height=environ.get('HTTP_HEIGHT'))  # TODO support image/device override in (server side) config (based on HTTP_ID)
     content_type = content_type_lookup[image_type]
 
-    start_response('200 OK',[
+    start_response('200 OK', [
         ('Content-type', content_type),
-        ('Content-Length', str(len(data)))
+        ('Content-Length', str(len(data))),
+        # TODO image meta data https://github.com/clach04/bitmap_server/issues/7
     ])
     return [data]
     
