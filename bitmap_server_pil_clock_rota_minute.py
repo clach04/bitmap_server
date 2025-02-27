@@ -299,21 +299,38 @@ def generate_image(format='png'):
 
 ################################################
 
+content_type_lookup = {
+    'png': 'image/png',
+    '4bitbin': 'application/octet-stream',  # TODO consider application/x-binary or custom to this app; application/x-bms, application/x-bitmap-server, etc.
+}
 
 # TODO version, and include in header response
 
 def application(environ, start_response):
+    # DEBUG
+    for key in environ:
+        if key.startswith('HTTP_'):  # TODO potentially startswith 'wsgi' as well
+            # TODO remove leading 'HTTP_'?
+            print('http header ' + key + ' = ' + repr(environ[key]))
+
     path_info = environ['PATH_INFO']
     print('%r' % (path_info,))
     if path_info != '/':
         return not_found(environ, start_response)
 
+    # Determine image type to return
+    image_type = '4bitbin'  # default
+    HTTP_ACCEPT = environ.get('HTTP_ACCEPT', '')
+    HTTP_USER_AGENT = environ.get('HTTP_USER_AGENT', '')
+    if HTTP_ACCEPT == '*/*' or 'image/apng' in HTTP_ACCEPT or HTTP_USER_AGENT.startswith('curl') or HTTP_USER_AGENT.startswith('Mozilla'):
+       image_type = 'png'
+
     # TODO handle errors and return something suitable to client
     #data, content_type = generate_image(format='png'), 'image/png'
-    data, content_type = generate_image(format='4bitbin'), 'application/octet-stream'
+    #data, content_type = generate_image(format='4bitbin'), 'application/octet-stream'
+    data, content_type = generate_image(format=image_type), content_type_lookup[image_type]
 
     start_response('200 OK',[
-        #('Content-type', 'application/octet-stream'),  # TODO consider application/x-binary, application/x-bms, application/x-bitmap-server, etc.
         ('Content-type', content_type),
         ('Content-Length', str(len(data)))
     ])
