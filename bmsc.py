@@ -51,6 +51,11 @@ time.sleep(1)  # 1 second
 
 headers = {
     "ID": mac_addr_str,
+    # TODO
+    #"Access-Token": api_key),
+    #"Refresh-Rate": str(refresh_rate)),  # seconds
+    #"Battery-Voltage": str(battery_voltage)),  # max 5.0
+    #"FW-Version": fw_version),  # '2.1.3'
     "RSSI": str(wlan.status('rssi')),
     "Width": str(ssd.width),
     "Height": str(ssd.height)
