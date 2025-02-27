@@ -1,6 +1,7 @@
 """MicroPython nano-gui bitmap server client
 https://github.com/clach04/bitmap_server
 """
+import time
 
 from color_setup import ssd  # Create a nano-gui display instance
 from gui.core.nanogui import refresh
@@ -11,6 +12,12 @@ import requests  # TODO async http, aiohttp
 
 from microwifimanager.manager import WifiManager
 
+
+def printable_mac(in_bytes, seperator=':'):
+    if seperator:
+        return seperator.join(['%02x' % x for x in in_bytes])
+    else:
+        return in_bytes.hex()
 
 refresh(ssd, True)  # Initialise and clear display.
 
@@ -35,9 +42,13 @@ print("%r" % (wlan.ifconfig(),))  # IP address, subnet mask, gateway, DNS server
 print("%r" % (wlan.config('mac'),))  # MAC in bytes
 print("SSID: %r" % (wlan.config('ssid'),))
 print("hostname: %r" % (network.hostname(),))
+print('Regular WiFi MAC      %r' % (printable_mac(wlan.config('mac')),))
 
+print('pause for wifi to really be up')
+print('URL %s' % url)
+time.sleep(1)  # 1 second
 
-r = requests.get(url)
+r = requests.get(url, headers={"Width": str(ssd.width), "Height": str(ssd.height)})
 # Not enough memory to use nice wrappers like content:
 #   MemoryError: memory allocation failed, allocating 35992 bytes
 r.raw.readinto(ssd.mvb)  # Read the image into the frame buffer)
