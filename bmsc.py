@@ -1,4 +1,4 @@
-"""MicroPython bitmap server client
+"""MicroPython nano-gui bitmap server client
 https://github.com/clach04/bitmap_server
 """
 
