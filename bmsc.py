@@ -42,13 +42,14 @@ print("%r" % (wlan.ifconfig(),))  # IP address, subnet mask, gateway, DNS server
 print("%r" % (wlan.config('mac'),))  # MAC in bytes
 print("SSID: %r" % (wlan.config('ssid'),))
 print("hostname: %r" % (network.hostname(),))
-print('Regular WiFi MAC      %r' % (printable_mac(wlan.config('mac')),))
+mac_addr_str = printable_mac(wlan.config('mac'))
+print('Regular WiFi MAC      %r' % (mac_addr_str,))
 
 print('pause for wifi to really be up')
 print('URL %s' % url)
 time.sleep(1)  # 1 second
 
-r = requests.get(url, headers={"Width": str(ssd.width), "Height": str(ssd.height)})
+r = requests.get(url, headers={"ID": mac_addr_str, "Width": str(ssd.width), "Height": str(ssd.height)})
 # Not enough memory to use nice wrappers like content:
 #   MemoryError: memory allocation failed, allocating 35992 bytes
 r.raw.readinto(ssd.mvb)  # Read the image into the frame buffer)
