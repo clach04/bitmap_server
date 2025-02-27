@@ -326,7 +326,7 @@ def application(environ, start_response):
     # TODO handle errors and return something suitable to client
     #data, content_type = generate_image(format='png'), 'image/png'
     #data, content_type = generate_image(format='4bitbin'), 'application/octet-stream'
-    data = generate_image(format=image_type, screen_width=environ.get('HTTP_WIDTH'), screen_height=environ.get('HTTP_HEIGHT'))  # TODO support image/device override in (server side) config
+    data = generate_image(format=image_type, screen_width=environ.get('HTTP_WIDTH'), screen_height=environ.get('HTTP_HEIGHT'))  # TODO support image/device override in (server side) config (based on HTTP_ID)
     content_type = content_type_lookup[image_type]
 
     start_response('200 OK',[
