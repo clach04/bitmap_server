@@ -146,7 +146,7 @@ def convert_image(image):
     return fo.getvalue()
 
 
-def generate_image(format='png'):
+def generate_image(format='png', screen_width=None, screen_height=None):
     """TODOs config option
       * 24/12 hour config option
       * 1-bit/4-bit/8-bit color config option
@@ -158,10 +158,8 @@ def generate_image(format='png'):
     Ideas:
       * bitmap digits (rather than font)
     """
-    screen_res = (100, 100)  # FIXME / TODO config
-    screen_res = (320, 240)
-    #screen_res = (240, 320)
-    SCREEN_WIDTH, SCREEN_HEIGHT = screen_res[0], screen_res[1]
+    screen_res = (int(screen_width or 320), int(screen_height or 240))  # TODO bother with error handling here for non-numeric params?
+    SCREEN_WIDTH, SCREEN_HEIGHT = screen_res[0], screen_res[1]  # TODO min/max support?
 
     # figure out centered view
     # assume square pixels for easier math
@@ -328,7 +326,8 @@ def application(environ, start_response):
     # TODO handle errors and return something suitable to client
     #data, content_type = generate_image(format='png'), 'image/png'
     #data, content_type = generate_image(format='4bitbin'), 'application/octet-stream'
-    data, content_type = generate_image(format=image_type), content_type_lookup[image_type]
+    data = generate_image(format=image_type, screen_width=environ.get('HTTP_WIDTH'), screen_height=environ.get('HTTP_HEIGHT'))  # TODO support image/device override in (server side) config
+    content_type = content_type_lookup[image_type]
 
     start_response('200 OK',[
         ('Content-type', content_type),

@@ -11,6 +11,10 @@ Serve (PNG) bitmap images of current time:
 
     python bitmap_server_pil_clock_rota_minute.py
 
+Test cURL client:
+
+    curl -v -H "Width: 100" -H "Height: 200" http://localhost:8080 --output test.png
+
 ## Optional setup
 
 
