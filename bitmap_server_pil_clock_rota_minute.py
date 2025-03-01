@@ -334,8 +334,8 @@ def application(environ, start_response):
     HTTP_ACCEPT = environ.get('HTTP_ACCEPT', '')
     HTTP_USER_AGENT = environ.get('HTTP_USER_AGENT', '')
     if environ.get('HTTP__BPP'):
-        print('HTTP__BPP: %r' % (HTTP__BPP,))
         bpp = int(environ.get('HTTP__BPP'))  # TODO error handling
+        print('bpp: %r' % (bpp,))
         if bpp == 1:
             image_type = 'pbm'
         elif bpp == 4:
