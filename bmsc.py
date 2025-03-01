@@ -60,6 +60,7 @@ headers = {
     "Width": str(ssd.width),
     "Height": str(ssd.height),
     # TODO does ssd contain a hint about bit-depth (and/or number of colors - for some eink displays number of colors may not completely match 2^bit-depth)?
+    "_bpp": str(len(ssd.mvb) // (ssd.width * ssd.height // 8)),  # Bits Per Plane, i.e. color/bit-depth
 }
 
 r = requests.get(url, headers=headers)

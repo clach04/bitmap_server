@@ -325,11 +325,22 @@ def application(environ, start_response):
         return not_found(environ, start_response)
 
     # Determine image type to return
+    # TODO check device MAC/id and use that for lookup, for now use info from client heuristic
+    # FIXME/TODO remove string literals below and replace with constants
     image_type = '4bitbin'  # default
     HTTP_ACCEPT = environ.get('HTTP_ACCEPT', '')
     HTTP_USER_AGENT = environ.get('HTTP_USER_AGENT', '')
-    if HTTP_ACCEPT == '*/*' or 'image/apng' in HTTP_ACCEPT or HTTP_USER_AGENT.startswith('curl') or HTTP_USER_AGENT.startswith('Mozilla'):
+    if environ.get('HTTP__BPP'):
+        bpp = int(environ.get('HTTP__BPP'))  # TODO error handling
+        if bpp == 1:
+            image_type = 'pbm'
+        elif bpp == 4:
+            image_type = '4bitbin'  # nano-gui color
+        else:
+            raise NotImplementedError('bit depth %r' % bpp)
+    elif HTTP_ACCEPT == '*/*' or 'image/apng' in HTTP_ACCEPT or HTTP_USER_AGENT.startswith('curl') or HTTP_USER_AGENT.startswith('Mozilla'):
        image_type = 'png'
+
 
     # TODO handle errors and return something suitable to client
     #data, content_type = generate_image(format='png'), 'image/png'
