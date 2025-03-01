@@ -110,7 +110,7 @@ def convert_image(image):
     if pal_type not in ("RGB", "RGB;L"):
         raise NotImplementedError('Need RGB palette, try a PNG file (instead of BMP)')
 
-    print(pal_data)
+    #print(pal_data)
     if is_py3:
         pal_data = list(pal_data)
     else:
@@ -118,9 +118,11 @@ def convert_image(image):
 
     indexed_palette = mygetpalette(pal_type,pal_data) ## must contain accurate palette
 
+    """
     print(indexed_palette)
     for entry in indexed_palette:
         print(entry)
+    """
 
     pixels = list(im.getdata())
     """
@@ -158,6 +160,7 @@ def generate_image(format='png', screen_width=None, screen_height=None):
     Ideas:
       * bitmap digits (rather than font)
     """
+    print('generate_image %r' % ((format, screen_width, screen_height),))
     screen_res = (int(screen_width or 320), int(screen_height or 240))  # TODO bother with error handling here for non-numeric params?
     SCREEN_WIDTH, SCREEN_HEIGHT = screen_res[0], screen_res[1]  # TODO min/max support?
 
@@ -165,14 +168,14 @@ def generate_image(format='png', screen_width=None, screen_height=None):
     # assume square pixels for easier math
     # TODO add margin support
     min_pixel_length = min(SCREEN_WIDTH, SCREEN_HEIGHT)
-    print(min_pixel_length)
+    #print(min_pixel_length)
     if min_pixel_length == SCREEN_WIDTH:
         offset = (SCREEN_HEIGHT - min_pixel_length) // 2
         circle_box = (0, offset, 0 + min_pixel_length, offset + min_pixel_length)
     else:
         offset = (SCREEN_WIDTH - min_pixel_length) // 2
         circle_box = (offset, 0, offset + min_pixel_length, 0 + min_pixel_length)
-    print(circle_box)
+    print('circle_box %r' % (circle_box,))
 
 
     # FIXME / TODO config
@@ -183,7 +186,7 @@ def generate_image(format='png', screen_width=None, screen_height=None):
     arc_width = min_pixel_length // 10  # pixels
     font_size = 72
     font_size = arc_width * 5
-    print(font_size)
+    print('font_size %r' % (font_size,))
 
     # FIXME / TODO do once
     clock_font = None
@@ -320,7 +323,7 @@ def application(environ, start_response):
             print('http header ' + key + ' = ' + repr(environ[key]))
 
     path_info = environ['PATH_INFO']
-    print('%r' % (path_info,))
+    print('PATH: %r' % (path_info,))
     if path_info != '/':
         return not_found(environ, start_response)
 
@@ -331,6 +334,7 @@ def application(environ, start_response):
     HTTP_ACCEPT = environ.get('HTTP_ACCEPT', '')
     HTTP_USER_AGENT = environ.get('HTTP_USER_AGENT', '')
     if environ.get('HTTP__BPP'):
+        print('HTTP__BPP: %r' % (HTTP__BPP,))
         bpp = int(environ.get('HTTP__BPP'))  # TODO error handling
         if bpp == 1:
             image_type = 'pbm'
@@ -339,7 +343,9 @@ def application(environ, start_response):
         else:
             raise NotImplementedError('bit depth %r' % bpp)
     elif HTTP_ACCEPT == '*/*' or 'image/apng' in HTTP_ACCEPT or HTTP_USER_AGENT.startswith('curl') or HTTP_USER_AGENT.startswith('Mozilla'):
-       image_type = 'png'
+        print('HTTP_ACCEPT: %r' % (HTTP_ACCEPT,))
+        print('HTTP_USER_AGENT: %r' % (HTTP_USER_AGENT,))
+        image_type = 'png'
 
 
     # TODO handle errors and return something suitable to client
