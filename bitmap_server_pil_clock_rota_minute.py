@@ -291,6 +291,13 @@ def generate_image(format='png', screen_width=None, screen_height=None):
         return convert_image(image)
     else:
         bufferedfileptr = FakeFile()
+        if format in ('pbm', 'xbm'):
+            #im = ImageOps.invert(image)  # TODO invert at end?  - error; NotImplementedError: mode P support coming soon
+            #image = im.convert("1", dither=Image.FLOYDSTEINBERG)
+            image = image.convert("1", dither=Image.FLOYDSTEINBERG)
+            image = ImageOps.invert(image)
+            if format == 'pbm':
+                format = 'ppm'  # PIL will emit pbm, for 1-bit ppm. Will error if request pbm
         image.save(bufferedfileptr, format=format)
         return bufferedfileptr.getvalue()
     #image.show()
@@ -298,6 +305,7 @@ def generate_image(format='png', screen_width=None, screen_height=None):
 ################################################
 
 content_type_lookup = {
+    'pbm': 'image/x-portable-bitmap',  # convention, not standard. Also see image/x-portable-anymap - https://netpbm.sourceforge.net/doc/pbm.html
     'png': 'image/png',
     '4bitbin': 'application/octet-stream',  # TODO consider application/x-binary or custom to this app; application/x-bms, application/x-bitmap-server, etc.
 }
