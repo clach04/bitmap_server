@@ -14,7 +14,10 @@ Serve (PNG) bitmap images of current time:
 
 Test cURL client:
 
-    curl -v -H "Width: 100" -H "Height: 200" http://localhost:8080 --output test.png
+    curl -v -H "Width: 100" -H "Height: 200"                http://localhost:8080 --output test.png
+    curl -v -H "Width: 320" -H "Height: 240"                http://localhost:8080 --output test.png
+    curl -v -H "Width: 320" -H "Height: 240" -H "_BPP: 4"   http://localhost:8080 --output test.bin
+    curl -v -H "Width: 400" -H "Height: 300" -H "_BPP: 1"   http://localhost:8080 --output test.pbm
 
 ## Optional setup
 
