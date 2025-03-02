@@ -108,6 +108,7 @@ def get_and_update_display():
 
 async def main():
     # TODO review all schedule options/APIs (like cron)
+    # TODO look at sleep options, specifically for eink, look at deep sleep for display (as well as CPU) and use a hardware timer/wakeup
     seq = Sequence()
     asyncio.create_task(schedule(seq, 'every 1 min', hrs=None, mins=range(0, 60, 1)))
     # TODO regularly sync time
