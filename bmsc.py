@@ -38,6 +38,8 @@ while wlan is None:
     print("Trying to start WiFi network connection.")
     wlan = wfm.get_connection()
 print("Connected to WiFi network")
+ssd.text('Connected to WiFi network: %s' % wlan.config('ssid'), 0, 18+8, WHITE)
+refresh(ssd)
 print("%r" % (wlan.ifconfig(),))  # IP address, subnet mask, gateway, DNS server
 print("%r" % (wlan.config('mac'),))  # MAC in bytes
 print("SSID: %r" % (wlan.config('ssid'),))
