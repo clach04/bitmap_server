@@ -26,7 +26,7 @@ def printable_mac(in_bytes, seperator=':'):
     else:
         return in_bytes.hex()
 
-def get_config(fn='clock.json'):
+def get_config(fn='clock.json'):  # TODO consider using https://github.com/Uthayamurthy/ConfigManager-Micropython (note it uses regexes...)
     # NOTE less memory if just try and open file and deal with errors
     try:
         with open(fn) as f:
