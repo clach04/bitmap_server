@@ -7,12 +7,15 @@ from color_setup import ssd  # Create a nano-gui display instance
 from gui.core.nanogui import refresh
 from gui.core.colors import create_color, RED, BLUE, GREEN, WHITE, BLACK
 
+import asyncio
 import json
 import network
 import ntptime
 import requests  # TODO async http, aiohttp
 
 from microwifimanager.manager import WifiManager
+
+from sched.sched import schedule, Sequence  # https://github.com/peterhinch/micropython-async/blob/master/v3/docs/SCHEDULE.md
 
 try:
     import posix_tz  # https://github.com/clach04/py-posix_tz
@@ -78,26 +81,44 @@ if posix_tz:
     posix_tz.set_tz(config['TZ'])
     print(posix_tz.localtime())
 
-headers = {
-    "ID": mac_addr_str,
-    # TODO
-    #"Access-Token": api_key),
-    #"Refresh-Rate": str(refresh_rate)),  # seconds
-    #"Battery-Voltage": str(battery_voltage)),  # max 5.0
-    #"FW-Version": fw_version),  # '2.1.3'
-    "RSSI": str(wlan.status('rssi')),
-    "Width": str(ssd.width),
-    "Height": str(ssd.height),
-    # TODO does ssd contain a hint about bit-depth (and/or number of colors - for some eink displays number of colors may not completely match 2^bit-depth)?
-    "_bpp": str(len(ssd.mvb) // (ssd.width * ssd.height // 8)),  # Bits Per Plane, i.e. color/bit-depth
-}
+def get_and_update_display():
+    # FIXME headers do not need to be re-created each time, create once and update for things that can change
+    headers = {
+        "ID": mac_addr_str,
+        # TODO
+        #"Access-Token": api_key),
+        #"Refresh-Rate": str(refresh_rate)),  # seconds
+        #"Battery-Voltage": str(battery_voltage)),  # max 5.0
+        #"FW-Version": fw_version),  # '2.1.3'
+        "RSSI": str(wlan.status('rssi')),
+        "Width": str(ssd.width),
+        "Height": str(ssd.height),
+        # TODO does ssd contain a hint about bit-depth (and/or number of colors - for some eink displays number of colors may not completely match 2^bit-depth)?
+        "_bpp": str(len(ssd.mvb) // (ssd.width * ssd.height // 8)),  # Bits Per Plane, i.e. color/bit-depth
+    }
 
-r = requests.get(config['url'], headers=headers)
-# Not enough memory to use nice wrappers like content:
-#   MemoryError: memory allocation failed, allocating 35992 bytes
-r.raw.readinto(ssd.mvb)  # Read the image into the frame buffer)
-refresh(ssd)
-r.close()
+    r = requests.get(config['url'], headers=headers)
+    # Not enough memory to use nice wrappers like content:
+    #   MemoryError: memory allocation failed, allocating 35992 bytes
+    r.raw.readinto(ssd.mvb)  # Read the image into the frame buffer)
+    refresh(ssd)
+    r.close()
 
 # TODO every minute pull new image
-# TODO regularly sync time
+
+async def main():
+    # TODO review all schedule options/APIs (like cron)
+    seq = Sequence()
+    asyncio.create_task(schedule(seq, 'every 1 min', hrs=None, mins=range(0, 60, 1)))
+    # TODO regularly sync time
+    async for args in seq:
+        #print('scheduler args %r' % (args,))  # scheduler args ('every 1 min',)
+        if posix_tz:
+            print(posix_tz.localtime())
+        get_and_update_display()
+
+try:
+    get_and_update_display()  # maybe call this elsewhere? First time call
+    asyncio.run(main())
+finally:
+    _ = asyncio.new_event_loop()
