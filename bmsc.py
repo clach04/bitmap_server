@@ -8,9 +8,15 @@ from gui.core.nanogui import refresh
 from gui.core.colors import create_color, RED, BLUE, GREEN, WHITE, BLACK
 
 import network
+import ntptime
 import requests  # TODO async http, aiohttp
 
 from microwifimanager.manager import WifiManager
+
+try:
+    import posix_tz  # https://github.com/clach04/py-posix_tz
+except ImportError:
+    posix_tz = None
 
 
 def printable_mac(in_bytes, seperator=':'):
@@ -50,6 +56,11 @@ print('Regular WiFi MAC      %r' % (mac_addr_str,))
 print('pause for wifi to really be up')
 print('URL %s' % url)
 time.sleep(1)  # 1 second
+ntptime.settime()  # TODO config for which server(s) to use for time lookup.
+
+if posix_tz:
+    posix_tz.set_tz('PST8PDT,M3.2.0/2:00:00,M11.1.0/2:00:00')  # TODO config
+    print(posix_tz.localtime())
 
 headers = {
     "ID": mac_addr_str,
@@ -71,3 +82,6 @@ r = requests.get(url, headers=headers)
 r.raw.readinto(ssd.mvb)  # Read the image into the frame buffer)
 refresh(ssd)
 r.close()
+
+# TODO every minute pull new image
+# TODO regularly sync time
