@@ -100,7 +100,7 @@ def get_and_update_display():
     r = requests.get(config['url'], headers=headers)
     # Not enough memory to use nice wrappers like content:
     #   MemoryError: memory allocation failed, allocating 35992 bytes
-    r.raw.readinto(ssd.mvb)  # Read the image into the frame buffer)
+    r.raw.readinto(ssd.mvb)  # Read the image into the frame buffer)  FIXME/TODO limit size...
     refresh(ssd)
     r.close()
 
