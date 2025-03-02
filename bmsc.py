@@ -7,6 +7,7 @@ from color_setup import ssd  # Create a nano-gui display instance
 from gui.core.nanogui import refresh
 from gui.core.colors import create_color, RED, BLUE, GREEN, WHITE, BLACK
 
+import json
 import network
 import ntptime
 import requests  # TODO async http, aiohttp
@@ -25,12 +26,27 @@ def printable_mac(in_bytes, seperator=':'):
     else:
         return in_bytes.hex()
 
+def get_config(fn='clock.json'):
+    # NOTE less memory if just try and open file and deal with errors
+    try:
+        with open(fn) as f:
+            c = json.load(f)
+    except:
+        # yeah, bare except, gulp :-(
+        c = {}
+    # dumb update/merge for defaults
+    c['TZ'] = c.get('TZ', 'PST8PDT,M3.2.0/2:00:00,M11.1.0/2:00:00')
+    c['url'] = c.get('url', 'http://192.168.11.101:1299')
+    # TODO NTP Server list
+    return c
+
+
 refresh(ssd, True)  # Initialise and clear display.
+config = get_config()
 
 # Uncomment for ePaper displays
 # ssd.wait_until_ready()
 
-url = "http://192.168.11.101:1299"  # TODO config
 ssid = 'bmsc'
 
 
@@ -54,12 +70,12 @@ mac_addr_str = printable_mac(wlan.config('mac'))
 print('Regular WiFi MAC      %r' % (mac_addr_str,))
 
 print('pause for wifi to really be up')
-print('URL %s' % url)
+print('URL %s' % config['url'])
 time.sleep(1)  # 1 second
 ntptime.settime()  # TODO config for which server(s) to use for time lookup.
 
 if posix_tz:
-    posix_tz.set_tz('PST8PDT,M3.2.0/2:00:00,M11.1.0/2:00:00')  # TODO config
+    posix_tz.set_tz(config['TZ'])
     print(posix_tz.localtime())
 
 headers = {
@@ -76,7 +92,7 @@ headers = {
     "_bpp": str(len(ssd.mvb) // (ssd.width * ssd.height // 8)),  # Bits Per Plane, i.e. color/bit-depth
 }
 
-r = requests.get(url, headers=headers)
+r = requests.get(config['url'], headers=headers)
 # Not enough memory to use nice wrappers like content:
 #   MemoryError: memory allocation failed, allocating 35992 bytes
 r.raw.readinto(ssd.mvb)  # Read the image into the frame buffer)
