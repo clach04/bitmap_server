@@ -24,3 +24,8 @@ Test cURL client:
 
     pip install pillow
     pip install Werkzeug
+
+## Tenuously Similar Projects
+
+  * https://github.com/guysoft/FullPageOS
+
