@@ -81,6 +81,13 @@ if posix_tz:
     posix_tz.set_tz(config['TZ'])
     print(posix_tz.localtime())
 
+try:
+    bpp = len(ssd.mvb) // (ssd.width * ssd.height // 8)  # Bits Per Plane, i.e. color/bit-depth
+except AttributeError:
+    # probably mvb missing, assume 1-bit - NOTE will cause issues later as readinto mvb later...
+    bpp = 1
+
+
 def get_and_update_display():
     # FIXME headers do not need to be re-created each time, create once and update for things that can change
     headers = {
@@ -94,10 +101,25 @@ def get_and_update_display():
         "Width": str(ssd.width),
         "Height": str(ssd.height),
         # TODO does ssd contain a hint about bit-depth (and/or number of colors - for some eink displays number of colors may not completely match 2^bit-depth)?
-        "_bpp": str(len(ssd.mvb) // (ssd.width * ssd.height // 8)),  # Bits Per Plane, i.e. color/bit-depth
+        "_bpp": str(bpp),
     }
 
     r = requests.get(config['url'], headers=headers)
+
+    content_length = r.headers.get('Content-Length')
+    if content_length:
+        content_length = int(content_length)  # TODO handle errors
+        print('content_length %r' % (content_length,))
+        skip_count = content_length - len(ssd.mvb)  # FIXME negative numbers...
+    else:
+        skip_count = 4  # assume nano-gui bitmap
+
+    if skip_count:
+        print('skip count %r' % (skip_count,))
+        #dummy = r.raw.read(skip_count)  # FIXME this (unnecessarily) allocates memory that will be thrown away... and may fail on color displays where memory is limited
+        r.raw.readinto(ssd.mvb, skip_count)  # kinda' dirty....
+        #print('skip-bytes %r' % (dummy,))
+
     # Not enough memory to use nice wrappers like content:
     #   MemoryError: memory allocation failed, allocating 35992 bytes
     r.raw.readinto(ssd.mvb)  # Read the image into the frame buffer)  FIXME/TODO limit size...
