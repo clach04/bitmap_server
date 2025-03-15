@@ -43,8 +43,17 @@ def get_config(fn='clock.json'):  # TODO consider using https://github.com/Uthay
     # TODO NTP Server list
     return c
 
+if hasattr(ssd, 'wait_until_ready'):  # i.e. eink/paper following specific API
+    real_refresh = refresh
+    def my_refresh(device, clear=False):
+        print('my_refresh')
+        real_refresh(device, clear)
+        ssd.wait_until_ready()
+    refresh = my_refresh
 
 refresh(ssd, True)  # Initialise and clear display.
+if hasattr(ssd, 'set_partial'):  # i.e. eink/paper following specific API
+    ssd.set_partial()
 config = get_config()
 
 # Uncomment for ePaper displays
@@ -141,7 +150,12 @@ async def main():
         get_and_update_display()
 
 try:
+    if hasattr(ssd, 'set_full'):  # i.e. eink/paper following specific API
+        ssd.set_full()
     get_and_update_display()  # maybe call this elsewhere? First time call
+    if hasattr(ssd, 'set_partial'):  # i.e. eink/paper following specific API
+        ssd.set_partial()
+
     asyncio.run(main())
 finally:
     _ = asyncio.new_event_loop()
