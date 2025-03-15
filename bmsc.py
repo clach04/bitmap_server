@@ -134,8 +134,7 @@ def get_and_update_display():
     r.raw.readinto(ssd.mvb)  # Read the image into the frame buffer)  FIXME/TODO limit size...
     refresh(ssd)
     r.close()
-
-# TODO every minute pull new image
+    # TODO for eink/paper set screen to sleep
 
 async def main():
     # TODO review all schedule options/APIs (like cron)
@@ -148,6 +147,7 @@ async def main():
         if posix_tz:
             print(posix_tz.localtime())
         get_and_update_display()
+        # Consider setting CPU low power mode/sleep?
 
 try:
     if hasattr(ssd, 'set_full'):  # i.e. eink/paper following specific API
