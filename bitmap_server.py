@@ -6,7 +6,7 @@
 import os
 import sys
 
-import anywsgi
+import anywsgi  # TODO use https://github.com/clach04/anywsgi-py/
 from anywsgi import not_found
 from anywsgi import DEFAULT_LISTEN_ADDRESS, DEFAULT_SERVER_PORT
 
