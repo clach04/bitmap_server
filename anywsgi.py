@@ -6,6 +6,8 @@
 # Copyright (C) 2024  Chris Clark
 """Quick and dirty WSGI runner
 
+TODO Jython - modjy
+TODO Jython - https://github.com/jythontools/fireside
 TODO Gunicorn 'Green Unicorn
 """
 
